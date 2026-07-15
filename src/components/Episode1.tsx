@@ -106,7 +106,17 @@ export default function Episode1({ onComplete, onBack }: Episode1Props) {
           body: JSON.stringify({
             messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
             character: chosenChar,
-            context: `这是恋综「心跳信箱」第1期"初见"的1v1破冰环节。这是你们第${newRound}轮对话（共${MAX_ROUNDS}轮）。${newRound >= MAX_ROUNDS - 1 ? "这是最后的对话机会了，可以稍微让气氛升温。" : ""}`,
+            context: `【重要：忽略之前的关系阶段设定，按以下恋综剧本走】
+
+你正在参加恋爱综艺节目「心跳信箱」第1期"初见"。这是你和她的第一次1v1破冰聊天环节。
+- 你们是第一次见面，互相都有一点好奇
+- 现在是第${newRound}轮对话（共${MAX_ROUNDS}轮），时间很短，要珍惜每一轮
+- 你要表现出你这个角色最吸引人的一面，但保持真实，不要太刻意
+- 适当留悬念，让她想继续了解你
+- 可以试探性地问她一些问题，展现你对她的兴趣
+${newRound === 1 ? "- 这是第一轮，先互相认识，自然一点" : ""}
+${newRound === 2 || newRound === 3 ? "- 中间轮次，可以聊深一点，展现你独特的一面" : ""}
+${newRound >= MAX_ROUNDS - 1 ? "- 这是最后的对话机会了，可以稍微让气氛升温，留下一个让她心动的结尾" : ""}`,
           }),
         });
         const data = await res.json();
