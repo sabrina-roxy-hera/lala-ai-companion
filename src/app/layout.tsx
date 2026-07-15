@@ -8,9 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Lala — 你的 AI 陪伴",
+  title: "心跳信箱 — 她在等你的回信",
   description: "一个安全、温暖的空间，做真实的自己。",
-  keywords: ["拉拉", "AI陪伴", "les", "女同", "聊天"],
+  keywords: ["拉拉", "AI陪伴", "les", "恋综", "聊天"],
 };
 
 export const viewport: Viewport = {
