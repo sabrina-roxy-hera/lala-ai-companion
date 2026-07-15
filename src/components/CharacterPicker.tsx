@@ -27,7 +27,7 @@ export default function CharacterPicker({
       <div className="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:pb-6 sm:mx-4 animate-in slide-in-from-bottom duration-300">
         <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5 sm:hidden" />
         <h2 className="text-lg font-semibold text-gray-800 text-center mb-5">
-          Switch companion
+          切换陪伴
         </h2>
         <div className="space-y-3">
           {(Object.keys(CHARACTER_PROFILES) as CharacterKey[]).map((key) => {

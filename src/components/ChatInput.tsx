@@ -44,8 +44,11 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Say something..."
+          placeholder="想说点什么..."
           disabled={disabled}
+          lang="zh-CN"
+          autoComplete="off"
+          spellCheck={false}
           rows={1}
           className="flex-1 resize-none rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-[15px] text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-violet-300 focus:bg-white transition-all disabled:opacity-50"
         />

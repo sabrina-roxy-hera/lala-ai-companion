@@ -102,7 +102,7 @@ export default function Home() {
           ...prev,
           {
             role: "assistant",
-            content: "Hmm, something went wrong with the connection. Try again in a sec?",
+            content: "嗯...网络好像出了点问题，等一下再试试？",
             timestamp: getTime(),
           },
         ]);
@@ -121,7 +121,7 @@ export default function Home() {
   const handleMoodSelect = (mood: string) => {
     setCurrentMood(mood);
     setShowMood(false);
-    sendMessage(`I'm feeling ${mood.toLowerCase()} right now`);
+    sendMessage(`我现在心情${mood}`);
   };
 
   const handleCharacterSwitch = (key: CharacterKey) => {
@@ -156,7 +156,7 @@ export default function Home() {
             </h1>
             <p className="text-[12px] text-green-500 flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full inline-block" />
-              Online
+              在线
             </p>
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function Home() {
         {/* Date separator */}
         <div className="flex justify-center mb-4">
           <span className="text-[11px] text-gray-400 bg-gray-100/80 px-3 py-1 rounded-full">
-            Today
+            今天
           </span>
         </div>
 

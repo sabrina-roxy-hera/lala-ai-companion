@@ -16,7 +16,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           <span className="text-4xl font-bold text-shimmer">Lala</span>
         </div>
         <p className="text-gray-500 text-sm mb-10">
-          Choose her. Start your story.
+          选一个她，开始你们的故事
         </p>
 
         {/* Character cards */}
@@ -71,7 +71,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
       {/* Bottom */}
       <div className="text-center py-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
         <p className="text-xs text-gray-400">
-          A safe space to be yourself
+          一个安全的空间，做真实的自己
         </p>
       </div>
     </div>

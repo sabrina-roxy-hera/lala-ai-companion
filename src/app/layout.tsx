@@ -8,9 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Lala — Your AI Companion",
-  description: "A safe, warm space to be yourself. AI companion for women who love women.",
-  keywords: ["lesbian", "AI companion", "wlw", "sapphic", "chat"],
+  title: "Lala — 你的 AI 陪伴",
+  description: "一个安全、温暖的空间，做真实的自己。",
+  keywords: ["拉拉", "AI陪伴", "les", "女同", "聊天"],
 };
 
 export const viewport: Viewport = {
@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="zh-CN" className={`${inter.variable} h-full antialiased`}>
       <body className="h-full">{children}</body>
     </html>
   );

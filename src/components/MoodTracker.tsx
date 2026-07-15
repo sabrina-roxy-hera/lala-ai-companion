@@ -6,12 +6,12 @@ interface MoodTrackerProps {
 }
 
 const MOODS = [
-  { emoji: "😊", label: "Happy", color: "from-yellow-400 to-orange-400" },
-  { emoji: "😌", label: "Calm", color: "from-green-400 to-teal-400" },
-  { emoji: "😔", label: "Down", color: "from-blue-400 to-indigo-400" },
-  { emoji: "😤", label: "Frustrated", color: "from-red-400 to-pink-400" },
-  { emoji: "🥱", label: "Bored", color: "from-gray-400 to-slate-400" },
-  { emoji: "🥰", label: "Missing you", color: "from-pink-400 to-rose-400" },
+  { emoji: "😊", label: "开心", color: "from-yellow-400 to-orange-400" },
+  { emoji: "😌", label: "平静", color: "from-green-400 to-teal-400" },
+  { emoji: "😔", label: "低落", color: "from-blue-400 to-indigo-400" },
+  { emoji: "😤", label: "烦躁", color: "from-red-400 to-pink-400" },
+  { emoji: "🥱", label: "无聊", color: "from-gray-400 to-slate-400" },
+  { emoji: "🥰", label: "想你了", color: "from-pink-400 to-rose-400" },
 ];
 
 export default function MoodTracker({ onSelect, visible }: MoodTrackerProps) {
@@ -20,7 +20,7 @@ export default function MoodTracker({ onSelect, visible }: MoodTrackerProps) {
   return (
     <div className="px-4 py-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <p className="text-center text-sm text-gray-500 mb-3">
-        How are you feeling?
+        现在心情怎么样？
       </p>
       <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
         {MOODS.map((mood) => (
