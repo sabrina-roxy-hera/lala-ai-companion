@@ -15,6 +15,34 @@ const CHOICES_INSTRUCTION = `
 选项2
 选项3`;
 
+async function callOpenRouter(requestBody: string, headers: Record<string, string>) {
+  const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+
+  if (proxyUrl) {
+    try {
+      const { HttpsProxyAgent } = await import("https-proxy-agent");
+      const nodeFetch = (await import("node-fetch")).default;
+      const agent = new HttpsProxyAgent(proxyUrl);
+      const res = await nodeFetch(OPENROUTER_API_URL, {
+        method: "POST",
+        headers,
+        body: requestBody,
+        agent,
+      });
+      return { ok: res.ok, status: res.status, json: () => res.json(), text: () => res.text() };
+    } catch {
+      // fallback to native fetch if proxy modules unavailable
+    }
+  }
+
+  const res = await fetch(OPENROUTER_API_URL, {
+    method: "POST",
+    headers,
+    body: requestBody,
+  });
+  return { ok: res.ok, status: res.status, json: () => res.json(), text: () => res.text() };
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { messages, character = "shenmo", mood, context } = await req.json();
@@ -26,17 +54,14 @@ export async function POST(req: NextRequest) {
 
     let systemPrompt = profile.system + CHOICES_INSTRUCTION;
 
-    // Inject episode context
     if (context) {
       systemPrompt += `\n\n## 场景背景\n${context}`;
     }
 
-    // Inject mood context
     if (mood) {
       systemPrompt += `\n\n## 当前状态\n她刚告诉你她现在的心情是"${mood}"。根据她的情绪调整你的语气和回应。`;
     }
 
-    // Add time awareness
     const hour = new Date().getHours();
     if (hour >= 22 || hour < 6) {
       systemPrompt += `\n\n现在是深夜/凌晨。语气要更柔软、更亲密——像两个在乎彼此的人的深夜对话。`;
@@ -44,7 +69,6 @@ export async function POST(req: NextRequest) {
       systemPrompt += `\n\n现在是早上。可以问问她睡得怎么样，今天有什么安排。`;
     }
 
-    // Build OpenRouter messages format
     const openRouterMessages = [
       { role: "system", content: systemPrompt },
       ...messages.map((m: { role: string; content: string }) => ({
@@ -53,56 +77,44 @@ export async function POST(req: NextRequest) {
       })),
     ];
 
-    const requestBody = JSON.stringify({
-      model: process.env.AI_MODEL || "google/gemini-2.5-flash",
-      messages: openRouterMessages,
-      max_tokens: 400,
-    });
-
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-      "X-Title": "Heartbeat Mailbox",
-    };
-
-    let response: Response;
-
-    const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
-    if (proxyUrl) {
-      // Local dev: use node-fetch with proxy agent
-      const { HttpsProxyAgent } = await import("https-proxy-agent");
-      const nodeFetch = (await import("node-fetch")).default;
-      const agent = new HttpsProxyAgent(proxyUrl);
-      const res = await nodeFetch(OPENROUTER_API_URL, {
-        method: "POST",
-        headers,
-        body: requestBody,
-        agent,
-      });
-      // Convert node-fetch response to web Response-like
-      if (!res.ok) {
-        const err = await res.text();
-        console.error("OpenRouter error:", err);
-        return Response.json({ error: "AI service error" }, { status: 502 });
+    const response = await callOpenRouter(
+      JSON.stringify({
+        model: process.env.AI_MODEL || "google/gemini-2.5-flash",
+        messages: openRouterMessages,
+        max_tokens: 400,
+      }),
+      {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+        "X-Title": "Heartbeat Mailbox",
       }
-      const data = await res.json() as { choices?: { message?: { content?: string } }[] };
-      return parseAndRespond(data);
-    } else {
-      // Vercel / no proxy: use native fetch
-      response = await fetch(OPENROUTER_API_URL, {
-        method: "POST",
-        headers,
-        body: requestBody,
-      });
-      if (!response.ok) {
-        const err = await response.text();
-        console.error("OpenRouter error:", err);
-        return Response.json({ error: "AI service error" }, { status: 502 });
-      }
-      const data = await response.json() as { choices?: { message?: { content?: string } }[] };
-      return parseAndRespond(data);
+    );
+
+    if (!response.ok) {
+      const err = await response.text();
+      console.error("OpenRouter error:", err);
+      return Response.json({ error: "AI service error" }, { status: 502 });
     }
+
+    const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
+    const rawText = data.choices?.[0]?.message?.content || "";
+
+    let message = rawText;
+    let choices: string[] = [];
+
+    const separatorIndex = rawText.lastIndexOf("---");
+    if (separatorIndex !== -1) {
+      message = rawText.substring(0, separatorIndex).trim();
+      const choicesText = rawText.substring(separatorIndex + 3).trim();
+      choices = choicesText
+        .split("\n")
+        .map((c: string) => c.trim())
+        .filter((c: string) => c.length > 0 && c.length < 30)
+        .slice(0, 3);
+    }
+
+    return Response.json({ message, choices });
   } catch (error) {
     console.error("Chat API error:", error);
     return Response.json(
@@ -110,24 +122,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-function parseAndRespond(data: { choices?: { message?: { content?: string } }[] }) {
-  const rawText = data.choices?.[0]?.message?.content || "";
-
-  let message = rawText;
-  let choices: string[] = [];
-
-  const separatorIndex = rawText.lastIndexOf("---");
-  if (separatorIndex !== -1) {
-    message = rawText.substring(0, separatorIndex).trim();
-    const choicesText = rawText.substring(separatorIndex + 3).trim();
-    choices = choicesText
-      .split("\n")
-      .map((c: string) => c.trim())
-      .filter((c: string) => c.length > 0 && c.length < 30)
-      .slice(0, 3);
-  }
-
-  return Response.json({ message, choices });
 }
