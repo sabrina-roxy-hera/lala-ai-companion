@@ -78,6 +78,7 @@ export default function Episode1({ onComplete, onBack }: Episode1Props) {
           role: "assistant",
           content: profile.greeting,
           timestamp: getTime(),
+          choices: profile.openingChoices,
         },
       ]);
     }
