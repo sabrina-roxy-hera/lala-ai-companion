@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         "X-Title": "Heartbeat Mailbox",
       },
       body: JSON.stringify({
-        model: process.env.AI_MODEL || "anthropic/claude-sonnet-4",
+        model: process.env.AI_MODEL || "google/gemini-2.5-flash",
         messages: openRouterMessages,
         max_tokens: 400,
       }),
