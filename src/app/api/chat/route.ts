@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
 import { CHARACTER_PROFILES, CharacterKey } from "@/lib/prompts";
-import { HttpsProxyAgent } from "https-proxy-agent";
 
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
@@ -54,56 +53,56 @@ export async function POST(req: NextRequest) {
       })),
     ];
 
-    // Use proxy for regions where models are restricted
-    const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
-    const fetchOptions: RequestInit & { agent?: HttpsProxyAgent<string> } = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-        "X-Title": "Heartbeat Mailbox",
-      },
-      body: JSON.stringify({
-        model: process.env.AI_MODEL || "google/gemini-2.5-flash",
-        messages: openRouterMessages,
-        max_tokens: 400,
-      }),
+    const requestBody = JSON.stringify({
+      model: process.env.AI_MODEL || "google/gemini-2.5-flash",
+      messages: openRouterMessages,
+      max_tokens: 400,
+    });
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+      "X-Title": "Heartbeat Mailbox",
     };
 
+    let response: Response;
+
+    const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
     if (proxyUrl) {
-      fetchOptions.agent = new HttpsProxyAgent(proxyUrl);
+      // Local dev: use node-fetch with proxy agent
+      const { HttpsProxyAgent } = await import("https-proxy-agent");
+      const nodeFetch = (await import("node-fetch")).default;
+      const agent = new HttpsProxyAgent(proxyUrl);
+      const res = await nodeFetch(OPENROUTER_API_URL, {
+        method: "POST",
+        headers,
+        body: requestBody,
+        agent,
+      });
+      // Convert node-fetch response to web Response-like
+      if (!res.ok) {
+        const err = await res.text();
+        console.error("OpenRouter error:", err);
+        return Response.json({ error: "AI service error" }, { status: 502 });
+      }
+      const data = await res.json() as { choices?: { message?: { content?: string } }[] };
+      return parseAndRespond(data);
+    } else {
+      // Vercel / no proxy: use native fetch
+      response = await fetch(OPENROUTER_API_URL, {
+        method: "POST",
+        headers,
+        body: requestBody,
+      });
+      if (!response.ok) {
+        const err = await response.text();
+        console.error("OpenRouter error:", err);
+        return Response.json({ error: "AI service error" }, { status: 502 });
+      }
+      const data = await response.json() as { choices?: { message?: { content?: string } }[] };
+      return parseAndRespond(data);
     }
-
-    // Use node-fetch style with agent support
-    const nodeFetch = (await import("node-fetch")).default;
-    const response = await nodeFetch(OPENROUTER_API_URL, fetchOptions as Parameters<typeof nodeFetch>[1]);
-
-    if (!response.ok) {
-      const err = await response.text();
-      console.error("OpenRouter error:", err);
-      return Response.json({ error: "AI service error" }, { status: 502 });
-    }
-
-    const data = await response.json() as { choices?: { message?: { content?: string } }[] };
-    const rawText = data.choices?.[0]?.message?.content || "";
-
-    // Parse choices from response
-    let message = rawText;
-    let choices: string[] = [];
-
-    const separatorIndex = rawText.lastIndexOf("---");
-    if (separatorIndex !== -1) {
-      message = rawText.substring(0, separatorIndex).trim();
-      const choicesText = rawText.substring(separatorIndex + 3).trim();
-      choices = choicesText
-        .split("\n")
-        .map((c: string) => c.trim())
-        .filter((c: string) => c.length > 0 && c.length < 30)
-        .slice(0, 3);
-    }
-
-    return Response.json({ message, choices });
   } catch (error) {
     console.error("Chat API error:", error);
     return Response.json(
@@ -111,4 +110,24 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+function parseAndRespond(data: { choices?: { message?: { content?: string } }[] }) {
+  const rawText = data.choices?.[0]?.message?.content || "";
+
+  let message = rawText;
+  let choices: string[] = [];
+
+  const separatorIndex = rawText.lastIndexOf("---");
+  if (separatorIndex !== -1) {
+    message = rawText.substring(0, separatorIndex).trim();
+    const choicesText = rawText.substring(separatorIndex + 3).trim();
+    choices = choicesText
+      .split("\n")
+      .map((c: string) => c.trim())
+      .filter((c: string) => c.length > 0 && c.length < 30)
+      .slice(0, 3);
+  }
+
+  return Response.json({ message, choices });
 }
