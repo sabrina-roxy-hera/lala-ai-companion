@@ -29,7 +29,7 @@ function getTime() {
 type AppScreen = "home" | "episode1" | "freechat";
 
 export default function Home() {
-  const [screen, setScreen] = useState<AppScreen>("home");
+  const [screen, setScreen] = useState<AppScreen>("episode1");
   const [character, setCharacter] = useState<CharacterKey>("shenmo");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
