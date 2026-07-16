@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     const response = await callOpenRouter(
       JSON.stringify({
-        model: process.env.AI_MODEL || "google/gemini-2.5-flash",
+        model: process.env.AI_MODEL || "meta-llama/llama-4-maverick",
         messages: openRouterMessages,
         max_tokens: 200,
       }),
