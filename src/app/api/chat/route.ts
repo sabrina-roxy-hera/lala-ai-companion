@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       JSON.stringify({
         model: process.env.AI_MODEL || "google/gemini-2.5-flash",
         messages: openRouterMessages,
-        max_tokens: 400,
+        max_tokens: 200,
       }),
       {
         "Content-Type": "application/json",
