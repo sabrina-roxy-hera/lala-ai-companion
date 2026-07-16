@@ -93,8 +93,8 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       const err = await response.text();
-      console.error("OpenRouter error:", err);
-      return Response.json({ error: "AI service error" }, { status: 502 });
+      console.error("OpenRouter error:", response.status, err);
+      return Response.json({ error: "AI service error", detail: err, status: response.status }, { status: 502 });
     }
 
     const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
