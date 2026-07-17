@@ -810,7 +810,7 @@ export default function Episode1({ onComplete, onBack }: Episode1Props) {
             <div className="text-center mb-3">
               <p className="text-sm text-violet-300/70 mb-2">主持人提问</p>
               <p className="text-base text-white font-medium leading-relaxed">
-                &ldquo;用一个词形容你对今晚的期待？&rdquo;
+                &ldquo;说一个你今晚注意到的细节——关于在场任何一个人的。&rdquo;
               </p>
             </div>
 

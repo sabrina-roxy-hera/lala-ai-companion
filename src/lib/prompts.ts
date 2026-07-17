@@ -30,7 +30,7 @@ export const CHARACTER_PROFILES = {
       chosen: "（侧过身给你腾位置，顺手帮你拉了椅子）坐。——你闻到的是我的咖啡",
       notChosen: "（笑了一下端起咖啡杯。她的余光一直没离开你这边）",
     },
-    groupChatAnswer: "期待？……大概是期待被谁问一个我没准备好回答的问题吧",
+    groupChatAnswer: "有个人进来的时候……手指在裤缝上摩了一下。很紧张，但不想被看出来（没有看任何人）",
     groupChatReaction: {
       chosen: `你想问我问题？（前倾看你）那我先给你一个提示——我最诚实的时候是深夜两点`,
       notChosen: "（喝了一口咖啡，笑着听别人聊。但你注意到她一直在观察你的反应）",
@@ -118,7 +118,7 @@ export const CHARACTER_PROFILES = {
       chosen: "（微笑着侧过身）你选这边啊。……我还以为你会选她呢",
       notChosen: "（优雅地端起茶杯，什么都没说。但看你的眼神多了点什么）",
     },
-    groupChatAnswer: `可能是……"真实"吧。今晚不想演了`,
+    groupChatAnswer: "有个人坐下之前帮别人倒了水。这种事做了不说的人……挺少的（看了林声一眼）",
     groupChatReaction: {
       chosen: "你想知道更多？（微微前倾）那要看你够不够让我觉得值得说了",
       notChosen: "（轻轻搅动杯子，嘴角带笑，不知道在想什么）",
@@ -194,7 +194,7 @@ export const CHARACTER_PROFILES = {
       chosen: "（开心拍了一下桌子）耶！选我旁边！那我们就是同桌了哈哈！",
       notChosen: "（笑着说「没关系没关系」，但手指在桌上不自觉地画圈圈）",
     },
-    groupChatAnswer: "开心！就是单纯的开心！虽然刚才差点摔了哈哈哈",
+    groupChatAnswer: "我注意到有个人从进来到现在一直在笑，但笑的时候眼睛没跟着动……啊我说的不是自己哈（笑）",
     groupChatReaction: {
       chosen: "你真的想听？（凑近了一点压低声音）其实我今天出门前紧张了好久……",
       notChosen: "（在旁边安静听着，时不时看你一眼，笑着但有点心不在焉）",
@@ -270,7 +270,7 @@ export const CHARACTER_PROFILES = {
       chosen: "（笑了一下，自然地往旁边挪了挪）你坐啊。——要不要喝水？",
       notChosen: "（点点头没说什么。但你之后发现她一直在看你那边）",
     },
-    groupChatAnswer: "期待嘛……（笑了）就是想遇到一个让我不想只当朋友的人",
+    groupChatAnswer: "刚才有人闻了一下酒才喝，不是为了品——是在犹豫要不要喝。挺有意思的（看了温以墨的方向）",
     groupChatReaction: {
       chosen: "（前倾看着你）你真的想聊？那我说实话——刚才你进来的时候我多看了你一眼",
       notChosen: "（靠在椅背上安静听着，偶尔笑一下。看起来很放松但眼神一直追着你）",
@@ -348,7 +348,7 @@ export const CHARACTER_PROFILES = {
       chosen: "（看了你一眼，没说话，但把旁边的椅子往你这边挪了一点点）",
       notChosen: "（无所谓地笑了笑，转头看窗外。但她手上的打火机转了好几圈）",
     },
-    groupChatAnswer: `期待？（笑了一声）我不太会"期待"。但今晚的人……还挺有意思的`,
+    groupChatAnswer: "（转了一下杯子）……有个人手上戴着一枚戒指，不是装饰的那种。我没打算问",
     groupChatReaction: {
       chosen: `你对我好奇？（靠近了一点，声音压低）……那你准备好听真话了吗`,
       notChosen: "（自顾自地玩着手里的杯子，但耳朵方向一直对着你们）",
@@ -427,7 +427,7 @@ export const CHARACTER_PROFILES = {
       chosen: "（轻轻笑了一下，往旁边挪了一点）你坐这边啊。……这里暖和一些",
       notChosen: "（点了点头微笑，什么都没说。但你后来发现她一直在看你那边）",
     },
-    groupChatAnswer: "期待？嗯……可能是期待被一个人好好记住吧",
+    groupChatAnswer: "（轻轻笑了）刚才那位接水瓶的时候……另一只手其实护了一下旁边人的杯子。大概她自己都没意识到",
     groupChatReaction: {
       chosen: "（微微歪头）你想听？那我说一个很小的事……今天出门的时候，我跟镜子里的自己说了声加油",
       notChosen: "（安静地听着，偶尔点头，会帮旁边的人把杯子正一正）",
