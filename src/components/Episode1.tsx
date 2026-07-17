@@ -50,9 +50,9 @@ const NPC_ENTRANCE_BANTER: NPCExchange[] = [
   {
     pair: ["shenmo", "gumian"],
     lines: [
-      { speaker: "gumian", line: `（看沈默）你写小说的？我好像……看过你那本` },
-      { speaker: "shenmo", line: `是吗。看到结局了？——哦对，我没写结局（笑）` },
-      { speaker: "gumian", line: `（微笑）所以你是来找结局的？` },
+      { speaker: "gumian", line: `（看沈默）你是做记者的？我好像……看过你写的那篇` },
+      { speaker: "shenmo", line: `是吗。看完什么感觉？` },
+      { speaker: "gumian", line: `（微笑）感觉你比你写的东西更危险` },
     ],
   },
   {
@@ -91,7 +91,7 @@ const NPC_ENTRANCE_BANTER: NPCExchange[] = [
     pair: ["shenmo", "linsheng"],
     lines: [
       { speaker: "shenmo", line: `你教音乐？——你手上那枚戒指，不像是装饰` },
-      { speaker: "linsheng", line: `（摸了一下戒指）……你果然是写故事的人` },
+      { speaker: "linsheng", line: `（摸了一下戒指）……你果然是做记者的。什么都看得出来` },
     ],
   },
   {
