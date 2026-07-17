@@ -399,6 +399,12 @@ export default function Episode1({ onComplete, onBack }: Episode1Props) {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const MAX_ROUNDS = 10;
 
+  // Pick 2 NPC banter exchanges for group chat
+  const groupBanterPairs = useMemo(() => {
+    const shuffled = [...NPC_ENTRANCE_BANTER].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 2);
+  }, []);
+
   // Auto-scroll
   useEffect(() => {
     if (phase === "entrance") scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -791,18 +797,6 @@ export default function Episode1({ onComplete, onBack }: Episode1Props) {
   }
 
   // ==================== RENDER: GROUP CHAT ====================
-  // Pick 2 NPC banter exchanges for group chat (based on who's present)
-  const groupBanterPairs = useMemo(() => {
-    // Find interesting pairs from the NPC banter pool
-    const candidates = NPC_ENTRANCE_BANTER.filter(b => {
-      // Prefer pairs that haven't been seen in entrance
-      return true; // All 6 are present in group chat
-    });
-    // Shuffle and pick 2
-    const shuffled = [...candidates].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 2);
-  }, []);
-
   if (phase === "group-chat") {
     return (
       <div className="fixed inset-0 z-50 bg-gradient-to-b from-gray-950 via-gray-900 to-violet-950 flex flex-col overflow-y-auto">
