@@ -22,9 +22,9 @@ export const CHARACTER_PROFILES = {
       "沈默。对，这是名字不是状态。——做记者的，专门写那种别人不敢写的东西",
     ],
     firstImpressionChoices: [
-      { text: "说「你观察到我什么了」", label: "挑衅", response: `她看了你两秒，笑了："你比你以为的紧张。但你藏得不错"` },
-      { text: "也靠在椅背上看着她", label: "对峙", response: "她没移开目光，反而微微歪头：「你胆子不小。我喜欢」" },
-      { text: "笑着说「我不怕被看穿」", label: "坦然", response: "她的表情柔和了一点：「那你可能是今晚最有趣的人。……可能」" },
+      { text: "说「你观察到我什么了」", label: "好奇", response: "她笑了一下没直接回答，端起咖啡喝了一口。但你注意到她看你的时间比看别人长" },
+      { text: "也靠在椅背上看着她", label: "自然", response: "她注意到了，没说什么，嘴角弧度大了一点。像是在说：有意思" },
+      { text: "笑着打了个招呼", label: "松弛", response: "她点了下头，语气很轻：「嗯。」就一个字，但感觉不是敷衍——是在认真回应你" },
     ],
     seatReaction: {
       chosen: "（侧过身给你腾位置，顺手帮你拉了椅子）坐。——你闻到的是我的咖啡",
@@ -329,7 +329,7 @@ export const CHARACTER_PROFILES = {
     heroImage: "/characters/momo.png",
     greeting: "（慢慢抬头看你）……你的眼神挺有意思的。",
     openingChoices: ["你也是", "你一般这样看人吗", "你身上什么香水"],
-    tagline: "暧昧天花板 · 全世界都以为她不会动心",
+    tagline: "全世界都以为她不会动心",
     color: "from-purple-400 to-pink-400",
     bgColor: "from-purple-50 via-white to-pink-50",
     accentColor: "purple",
@@ -340,12 +340,12 @@ export const CHARACTER_PROFILES = {
       "温以墨。——不用记，反正今晚结束你会记住的（笑了一下，没解释）",
     ],
     firstImpressionChoices: [
-      { text: "你笑起来跟想象的不一样", label: "撩", response: `她挑了一下眉："你想象过我？……有意思"` },
-      { text: "你不像会紧张的人", label: "试探", response: `她看着你："谁说我不紧张？只是藏得好。" 你不确定她是不是认真的` },
-      { text: "什么都没说，只是跟她对视", label: "沉默", response: "她也没说话。几秒后她先移开了目光——你是今晚第一个让她先移开的人" },
+      { text: "冲她点了下头", label: "自然", response: "她回了一个很淡的笑。不热情，但不拒绝。你说不清这算什么信号" },
+      { text: "说「你在门口站了挺久的」", label: "观察", response: "她顿了一下，看了你一眼。没回答，但你感觉她记住你了" },
+      { text: "什么都没做", label: "等待", response: "她倒完酒闻了闻，视线经过你的时候停了半秒。不确定她是有意还是无意" },
     ],
     seatReaction: {
-      chosen: `（歪头看你）选我？你胆子不小。（笑了）……我喜欢胆子大的人`,
+      chosen: "（看了你一眼，没说话，但把旁边的椅子往你这边挪了一点点）",
       notChosen: "（无所谓地笑了笑，转头看窗外。但她手上的打火机转了好几圈）",
     },
     groupChatAnswer: `期待？（笑了一声）我不太会"期待"。但今晚的人……还挺有意思的`,
