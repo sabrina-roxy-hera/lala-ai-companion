@@ -70,15 +70,23 @@ function buildEntranceScript(order: CharacterKey[]): ScriptStep[] {
       });
     }
 
-    // First impression choice
-    steps.push({
-      type: "choice",
-      character: key,
-      text: "",
-      delay: 0,
-      choices: char.firstImpressionChoices,
-    });
+    // First impression choice — only for guests 1, 3, 5 (give breathing room)
+    if (idx % 2 === 0) {
+      steps.push({
+        type: "choice",
+        character: key,
+        text: "",
+        delay: 0,
+        choices: char.firstImpressionChoices,
+      });
+    }
   });
+
+  // After all entrances — a recap moment
+  steps.push({ type: "divider", text: "·", delay: 1000 });
+  steps.push({ type: "host", text: "所有嘉宾都到齐了。六个人，六个故事", delay: 2500 });
+  steps.push({ type: "host", text: "你可能已经注意到了某个人——也可能还没有", delay: 2500 });
+  steps.push({ type: "host", text: "接下来，你需要做一个选择", delay: 2000 });
 
   return steps;
 }
