@@ -32,9 +32,111 @@ interface ScriptStep {
   choices?: { text: string; label: string; response: string }[];
 }
 
+// ===================== NPC互动数据 =====================
+
+interface NPCExchange {
+  pair: [CharacterKey, CharacterKey];
+  lines: { speaker: CharacterKey; line: string }[];
+}
+
+const NPC_ENTRANCE_BANTER: NPCExchange[] = [
+  {
+    pair: ["shenmo", "wenyimo"],
+    lines: [
+      { speaker: "shenmo", line: `（看着温以墨靠门框的样子，笑了）你进门的方式挺有设计感的` },
+      { speaker: "wenyimo", line: `（挑眉回看）你在观察我？——那我也观察一下你。（停顿）嗯……有意思` },
+    ],
+  },
+  {
+    pair: ["shenmo", "gumian"],
+    lines: [
+      { speaker: "gumian", line: `（看沈默）你写小说的？我好像……看过你那本` },
+      { speaker: "shenmo", line: `是吗。看到结局了？——哦对，我没写结局（笑）` },
+      { speaker: "gumian", line: `（微笑）所以你是来找结局的？` },
+    ],
+  },
+  {
+    pair: ["wenyimo", "chengye"],
+    lines: [
+      { speaker: "wenyimo", line: `（打量程野）运动员？身材真好` },
+      { speaker: "chengye", line: `谢谢。你纹身好看` },
+      { speaker: "wenyimo", line: `……你比我想的直接。（笑了）我不讨厌` },
+    ],
+  },
+  {
+    pair: ["luye", "linsheng"],
+    lines: [
+      { speaker: "luye", line: `（凑过去小声）你是不是也有点紧张！` },
+      { speaker: "linsheng", line: `（笑了）一点点。你呢？` },
+      { speaker: "luye", line: `超紧张！但我不能表现出来嘿嘿——你别告诉别人` },
+    ],
+  },
+  {
+    pair: ["gumian", "wenyimo"],
+    lines: [
+      { speaker: "gumian", line: `（目光扫过温以墨手腕）那个纹身……英文？` },
+      { speaker: "wenyimo", line: `（下意识遮了一下）……你眼睛挺尖` },
+      { speaker: "gumian", line: `（微笑端起茶杯）我什么都没问` },
+    ],
+  },
+  {
+    pair: ["chengye", "luye"],
+    lines: [
+      { speaker: "chengye", line: `你刚才进来差点摔了吧（笑）` },
+      { speaker: "luye", line: `被你看到了！！不许说出去！` },
+      { speaker: "chengye", line: `放心。但你欠我一个人情了（笑）` },
+    ],
+  },
+  {
+    pair: ["shenmo", "linsheng"],
+    lines: [
+      { speaker: "shenmo", line: `你教音乐？——你手上那枚戒指，不像是装饰` },
+      { speaker: "linsheng", line: `（摸了一下戒指）……你果然是写故事的人` },
+    ],
+  },
+  {
+    pair: ["shenmo", "chengye"],
+    lines: [
+      { speaker: "chengye", line: `（看沈默）你是不是在分析我们每个人？` },
+      { speaker: "shenmo", line: `（笑了）被发现了。——你比看起来的敏锐` },
+      { speaker: "chengye", line: `打球的人读对手是基本功。你也是吧？只是你读的是人` },
+    ],
+  },
+  {
+    pair: ["gumian", "linsheng"],
+    lines: [
+      { speaker: "gumian", line: `（看林声）你是今晚最安静的人。但我觉得你看得最清楚` },
+      { speaker: "linsheng", line: `（轻轻笑了）你也是啊。只是你用微笑藏起来了` },
+    ],
+  },
+  {
+    pair: ["wenyimo", "luye"],
+    lines: [
+      { speaker: "wenyimo", line: `（看鹿野）你笑得好真。我已经很久没见过这种笑了` },
+      { speaker: "luye", line: `（愣了一下）……你说这种话的时候好温柔诶。跟你给人的感觉不一样` },
+      { speaker: "wenyimo", line: `（移开目光）别乱说` },
+    ],
+  },
+];
+
+function findBanter(arrived: CharacterKey[], newGuest: CharacterKey, used: Set<string>): NPCExchange | null {
+  for (const banter of NPC_ENTRANCE_BANTER) {
+    const [a, b] = banter.pair;
+    const key = `${a}-${b}`;
+    if (used.has(key)) continue;
+    if ((a === newGuest && arrived.includes(b)) || (b === newGuest && arrived.includes(a))) {
+      used.add(key);
+      return banter;
+    }
+  }
+  return null;
+}
+
 function buildEntranceScript(order: CharacterKey[]): ScriptStep[] {
   const steps: ScriptStep[] = [];
   const ordinalLabels = ["第一位", "第二位", "第三位", "第四位", "第五位", "最后一位"];
+  const arrived: CharacterKey[] = [];
+  const usedBanter = new Set<string>();
 
   order.forEach((key, idx) => {
     const char = CHARACTER_PROFILES[key];
@@ -44,7 +146,6 @@ function buildEntranceScript(order: CharacterKey[]): ScriptStep[] {
     // Divider between guests
     if (idx > 0) {
       steps.push({ type: "divider", text: "·", delay: 1000 });
-      // Atmosphere comments as more people arrive
       if (idx === 2) {
         steps.push({ type: "host", text: "房间里的人渐渐多了。气氛开始变得微妙", delay: 1800 });
       } else if (idx === 4) {
@@ -70,7 +171,25 @@ function buildEntranceScript(order: CharacterKey[]): ScriptStep[] {
       });
     }
 
-    // First impression choice — only for guests 1, 3, 5 (give breathing room)
+    arrived.push(key);
+
+    // After even-indexed guests (2nd, 4th, 6th): NPC-NPC banter
+    if (idx % 2 === 1 && arrived.length >= 2) {
+      const banter = findBanter(arrived.slice(0, -1), key, usedBanter);
+      if (banter) {
+        steps.push({ type: "host", text: "——她们好像在聊什么", delay: 1500 });
+        for (const line of banter.lines) {
+          steps.push({
+            type: "dialogue",
+            character: line.speaker,
+            text: line.line,
+            delay: 2200,
+          });
+        }
+      }
+    }
+
+    // First impression choice — only for guests 1, 3, 5
     if (idx % 2 === 0) {
       steps.push({
         type: "choice",
@@ -82,7 +201,7 @@ function buildEntranceScript(order: CharacterKey[]): ScriptStep[] {
     }
   });
 
-  // After all entrances — a recap moment
+  // After all entrances — recap
   steps.push({ type: "divider", text: "·", delay: 1000 });
   steps.push({ type: "host", text: "所有嘉宾都到齐了。六个人，六个故事", delay: 2500 });
   steps.push({ type: "host", text: "你可能已经注意到了某个人——也可能还没有", delay: 2500 });
@@ -672,6 +791,18 @@ export default function Episode1({ onComplete, onBack }: Episode1Props) {
   }
 
   // ==================== RENDER: GROUP CHAT ====================
+  // Pick 2 NPC banter exchanges for group chat (based on who's present)
+  const groupBanterPairs = useMemo(() => {
+    // Find interesting pairs from the NPC banter pool
+    const candidates = NPC_ENTRANCE_BANTER.filter(b => {
+      // Prefer pairs that haven't been seen in entrance
+      return true; // All 6 are present in group chat
+    });
+    // Shuffle and pick 2
+    const shuffled = [...candidates].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 2);
+  }, []);
+
   if (phase === "group-chat") {
     return (
       <div className="fixed inset-0 z-50 bg-gradient-to-b from-gray-950 via-gray-900 to-violet-950 flex flex-col overflow-y-auto">
@@ -679,10 +810,10 @@ export default function Episode1({ onComplete, onBack }: Episode1Props) {
           <span className="text-xs text-violet-300/40">第1期 · 初见 · 群聊环节</span>
         </div>
 
-        <div className="flex-1 px-6 py-4 flex flex-col justify-center">
-          <div className="max-w-sm mx-auto w-full space-y-5 animate-fade-slide-up">
+        <div className="flex-1 px-6 py-4">
+          <div className="max-w-sm mx-auto w-full space-y-4 animate-fade-slide-up">
             {/* Host question */}
-            <div className="text-center mb-4">
+            <div className="text-center mb-3">
               <p className="text-sm text-violet-300/70 mb-2">主持人提问</p>
               <p className="text-base text-white font-medium leading-relaxed">
                 &ldquo;用一个词形容你对今晚的期待？&rdquo;
@@ -690,12 +821,12 @@ export default function Episode1({ onComplete, onBack }: Episode1Props) {
             </div>
 
             {/* Each character answers */}
-            {(groupChatStep >= 0) && guestOrder.map((key) => {
+            {guestOrder.map((key) => {
               const char = CHARACTER_PROFILES[key];
               return (
                 <div key={key} className="flex items-start gap-3 animate-fade-slide-up">
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mt-0.5">
-                    <Image src={char.avatar} alt={char.name} width={32} height={32} className="w-full h-full object-cover" />
+                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-0.5">
+                    <Image src={char.avatar} alt={char.name} width={28} height={28} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
                     <span className="text-[11px] text-gray-500">{char.name}</span>
@@ -704,6 +835,29 @@ export default function Episode1({ onComplete, onBack }: Episode1Props) {
                 </div>
               );
             })}
+
+            {/* NPC-NPC banter — they react to each other */}
+            <div className="border-t border-white/5 pt-3 space-y-3">
+              <p className="text-xs text-violet-300/50 text-center">她们好像互相接上话了——</p>
+              {groupBanterPairs.map((banter, bi) => (
+                <div key={bi} className="space-y-2 bg-white/3 rounded-xl p-3">
+                  {banter.lines.map((line, li) => {
+                    const char = CHARACTER_PROFILES[line.speaker];
+                    return (
+                      <div key={li} className="flex items-start gap-2.5">
+                        <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 mt-0.5">
+                          <Image src={char.avatar} alt={char.name} width={24} height={24} className="w-full h-full object-cover" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-gray-500">{char.name}</span>
+                          <p className="text-xs text-gray-300 mt-0.5">{line.line}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
 
             {/* User pick: who to follow up with */}
             {groupChatStep < 2 && (
