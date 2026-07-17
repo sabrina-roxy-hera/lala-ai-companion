@@ -6,7 +6,14 @@ const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const CHOICES_INSTRUCTION = `
 
 ## 回复格式要求
-在你的回复内容之后，换一行写"---"，然后在接下来的三行各写一个【用户（也就是和你聊天的那个人）】可能会回复你的话作为对话选项。注意：这些选项是站在用户的角度写的，不是你说的话。这三个选项应该代表用户不同的回应方向（比如：调皮地撩你/认真追问/试探你的态度）。选项要简短自然，像真人会打的字，不超过15个字。
+在你的回复内容之后，换一行写"---"，然后在接下来的三行各写一个【用户（也就是和你聊天的那个人）】可能会回复你的话作为对话选项。
+
+选项设计原则：
+- 三个选项必须代表三种截然不同的态度：一个是调皮/撩人方向，一个是认真/走心方向，一个是试探/好奇方向
+- 选项要像真人在微信上会打的字，口语化、简短，不超过15字
+- 不要写"我也是""好的""嗯嗯"这种无聊的敷衍回复
+- 至少有一个选项能把话题引向更深/更暧昧的方向
+- 选项里可以有一个稍微大胆的，让用户有"敢不敢点"的犹豫感
 
 示例格式：
 你的回复内容在这里
@@ -81,7 +88,7 @@ export async function POST(req: NextRequest) {
       JSON.stringify({
         model: process.env.AI_MODEL || "meta-llama/llama-4-maverick",
         messages: openRouterMessages,
-        max_tokens: 200,
+        max_tokens: 300,
       }),
       {
         "Content-Type": "application/json",

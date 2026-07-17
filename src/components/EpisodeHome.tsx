@@ -10,7 +10,7 @@ const EPISODES = [
   {
     number: 1,
     title: "初见",
-    subtitle: "三位嘉宾即将登场，你会对谁心动？",
+    subtitle: "六位嘉宾即将登场，你会对谁心动？",
     status: "available" as const,
     tag: "NEW",
   },
